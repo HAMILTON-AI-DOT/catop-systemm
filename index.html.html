@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro Operativo - Capot y Lubricantes</title>
+  <style>
+    :root{
+      --bg:#f4f6f8;
+      --card:#ffffff;
+      --text:#17202a;
+      --muted:#5d6d7e;
+      --line:#d6dbdf;
+      --primary:#145a32;
+      --primary2:#1e8449;
+      --soft:#eafaf1;
+      --soft2:#f8f9f9;
+      --danger:#c0392b;
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    header{
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:white;
+      padding:20px 18px;
+      position:sticky;
+      top:0;
+      z-index:20;
+      box-shadow:var(--shadow);
+    }
+    header .wrap{
+      max-width:1220px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    h1{
+      font-size:23px;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    header p{
+      margin:6px 0 0;
+      opacity:.9;
+      font-size:14px;
+    }
+    .badge{
+      display:inline-block;
+      background:rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.3);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    main{
+      max-width:1220px;
+      margin:20px auto;
+      padding:0 16px 34px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 0.9fr 1.2fr;
+      gap:18px;
+      align-items:start;
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(0,0,0,.04);
+    }
+    .card h2{
+      font-size:18px;
+      margin:0 0 14px;
+      color:var(--primary);
+    }
+    .card h3{
+      font-size:15px;
+      margin:18px 0 10px;
+      color:#273746;
+    }
+    label{
+      font-weight:700;
+      font-size:13px;
+      display:block;
+      margin:12px 0 6px;
+    }
+    input, select, textarea{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:white;
+      font-size:14px;
+      outline:none;
+    }
+    textarea{min-height:64px; resize:vertical}
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--primary2);
+      box-shadow:0 0 0 3px rgba(30,132,73,.12);
+    }
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .choice-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:8px;
+    }
+    .choice{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#fbfcfc;
+      cursor:pointer;
+      min-height:54px;
+      font-weight:700;
+      user-select:none;
+    }
+    .choice input{
+      width:auto;
+      transform:scale(1.25);
+    }
+    .choice:has(input:checked){
+      border-color:var(--primary2);
+      background:var(--soft);
+      color:var(--primary);
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:11px 14px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    button:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--primary); color:white}
+    .btn-secondary{background:#e8f5e9; color:var(--primary)}
+    .btn-danger{background:#fdecea; color:var(--danger)}
+    .btn-neutral{background:#ecf0f1; color:#273746}
+    .summary{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .kpi{
+      background:var(--soft);
+      border:1px solid #d5f5e3;
+      border-radius:16px;
+      padding:14px;
+    }
+    .kpi .label{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+    .kpi .value{
+      font-size:25px;
+      font-weight:800;
+      margin-top:6px;
+      color:var(--primary);
+    }
+    .filters{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin:8px 0 14px;
+    }
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:14px;
+      max-height:410px;
+      background:white;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:700px;
+      background:white;
+    }
+    th, td{
+      padding:10px 9px;
+      border-bottom:1px solid #edf0f2;
+      text-align:left;
+      font-size:13px;
+      vertical-align:top;
+    }
+    th{
+      background:#f8f9f9;
+      position:sticky;
+      top:0;
+      z-index:1;
+      color:#273746;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.2px;
+    }
+    .pill{
+      display:inline-block;
+      border-radius:999px;
+      padding:4px 8px;
+      font-weight:700;
+      font-size:12px;
+    }
+    .yes{background:#d5f5e3;color:#145a32}
+    .no{background:#fadbd8;color:#922b21}
+    .footer-note{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:14px;
+      line-height:1.4;
+    }
+    .section-title{
+      margin:14px 0 6px;
+      padding-top:10px;
+      border-top:1px dashed var(--line);
+      color:#273746;
+      font-size:14px;
+      font-weight:800;
+    }
+    .empty{
+      color:var(--muted);
+      text-align:center;
+      padding:24px;
+    }
+    .delete-row{
+      background:#fff;
+      color:var(--danger);
+      border:1px solid #fadbd8;
+      padding:6px 9px;
+      border-radius:10px;
+      font-size:12px;
+    }
+    .config{
+      margin-top:18px;
+      border-top:1px dashed var(--line);
+      padding-top:14px;
+    }
+    .config-block{
+      background:var(--soft2);
+      border:1px solid #edf0f2;
+      border-radius:16px;
+      padding:13px;
+      margin-top:10px;
+    }
+    .list-items{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 9px;
+      border-radius:999px;
+      background:white;
+      border:1px solid var(--line);
+      font-size:13px;
+    }
+    .tag button{
+      padding:2px 6px;
+      border-radius:999px;
+      background:#fdecea;
+      color:var(--danger);
+      font-size:11px;
+    }
+    .mini-help{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+      margin-top:4px;
+    }
+    .hidden{display:none!important}
+    .last-saved{
+      background:#ecf9f0;
+      border:1px solid #d5f5e3;
+      color:#145a32;
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      margin-top:12px;
+      display:none;
+    }
+    .quick-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:16px;
+    }
+    .quick-button{
+      font-size:16px;
+      padding:16px 12px;
+    }
+    @media(max-width:980px){
+      .grid{grid-template-columns:1fr}
+      .summary{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:580px){
+      h1{font-size:20px}
+      .row,.filters,.choice-grid,.quick-actions{grid-template-columns:1fr}
+      .summary{grid-template-columns:1fr}
+      .actions button{width:100%}
+      header{position:static}
+    }
+    @media print{
+      header,.card.form-card,.actions,.filters,.delete-row,.config{display:none!important}
+      main{margin:0;padding:0}
+      .grid{display:block}
+      .card{box-shadow:none;border:0}
+      .table-wrap{max-height:none;overflow:visible}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div>
+        <h1>Registro Operativo: Capot y Lubricantes</h1>
+        <p>Carga individual por cada atención realizada. Sin datos del cliente.</p>
+      </div>
+      <div class="badge" id="todayBadge"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card form-card">
+        <h2>Cargar atención</h2>
+
+        <form id="recordForm">
+          <label for="fecha">Fecha de operación</label>
+          <input type="date" id="fecha" required />
+
+          <label for="colaborador">Experto</label>
+          <select id="colaborador" required></select>
+          <div class="mini-help">Seleccionar el experto que realizó la atención.</div>
+
+          <div class="section-title">Actividad realizada en esta atención</div>
+
+          <label>¿Levantó capot?</label>
+          <div class="choice-grid">
+            <label class="choice">
+              <input type="radio" name="capot" id="capotSi" value="si" />
+              Sí, levantó capot
+            </label>
+            <label class="choice">
+              <input type="radio" name="capot" id="capotNo" value="no" checked />
+              No levantó capot
+            </label>
+          </div>
+
+          <label>¿Vendió lubricante?</label>
+          <div class="choice-grid">
+            <label class="choice">
+              <input type="radio" name="lubricante" id="lubricanteSi" value="si" />
+              Sí, vendió
+            </label>
+            <label class="choice">
+              <input type="radio" name="lubricante" id="lubricanteNo" value="no" checked />
+              No vendió
+            </label>
+          </div>
+
+          <div id="productBox" class="hidden">
+            <label for="producto">Producto vendido</label>
+            <select id="producto"></select>
+          </div>
+
+          <label for="observaciones">Observaciones breves</label>
+          <textarea id="observaciones" placeholder="Opcional. Ej.: se recomendó revisión, cliente no aceptó producto, bajo nivel de aceite, etc."></textarea>
+
+          <div class="quick-actions">
+            <button type="submit" class="btn-primary quick-button">Guardar atención</button>
+            <button type="button" class="btn-neutral quick-button" id="newClean">Nueva atención limpia</button>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn-secondary" id="sameExpertCapot">Guardar: mismo experto + capot</button>
+            <button type="button" class="btn-secondary" id="sameExpertLub">Guardar: mismo experto + lubricante</button>
+          </div>
+
+          <div id="lastSaved" class="last-saved"></div>
+        </form>
+
+        <div class="config">
+          <h2>Administrar expertos y productos</h2>
+
+          <div class="config-block">
+            <h3>Expertos</h3>
+            <div class="row">
+              <div>
+                <label for="newExpert">Agregar experto</label>
+                <input type="text" id="newExpert" placeholder="Nombre del experto" />
+              </div>
+              <div style="display:flex;align-items:end;">
+                <button type="button" class="btn-secondary" id="addExpert" style="width:100%;">Agregar</button>
+              </div>
+            </div>
+            <div class="mini-help">Para modificar un nombre, eliminarlo y volver a cargarlo correctamente.</div>
+            <div class="list-items" id="expertList"></div>
+          </div>
+
+          <div class="config-block">
+            <h3>Productos</h3>
+            <div class="row">
+              <div>
+                <label for="newProduct">Agregar producto</label>
+                <input type="text" id="newProduct" placeholder="Ej.: Helix x 1" />
+              </div>
+              <div style="display:flex;align-items:end;">
+                <button type="button" class="btn-secondary" id="addProduct" style="width:100%;">Agregar</button>
+              </div>
+            </div>
+            <div class="mini-help">Los productos cargados aparecen en el selector cuando se registra una venta.</div>
+            <div class="list-items" id="productList"></div>
+          </div>
+        </div>
+
+        <p class="footer-note">
+          Cada registro representa una atención individual. Ejemplo: si un experto levanta 5 capot en un turno, debe cargar 5 registros separados.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Consulta y resumen</h2>
+
+        <div class="summary">
+          <div class="kpi">
+            <div class="label">Atenciones</div>
+            <div class="value" id="kpiAtenciones">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Capot</div>
+            <div class="value" id="kpiCapot">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Ventas</div>
+            <div class="value" id="kpiVentas">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Expertos activos</div>
+            <div class="value" id="kpiExpertos">0</div>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div>
+            <label for="filterFecha">Filtrar por fecha</label>
+            <input type="date" id="filterFecha" />
+          </div>
+          <div>
+            <label for="filterColaborador">Filtrar por experto</label>
+            <select id="filterColaborador"></select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-secondary" id="todayFilter">Ver solo hoy</button>
+          <button type="button" class="btn-neutral" id="clearFilters">Limpiar filtros</button>
+          <button type="button" class="btn-secondary" id="exportCsv">Exportar CSV / Excel</button>
+          <button type="button" class="btn-secondary" id="printReport">Imprimir reporte</button>
+          <button type="button" class="btn-danger" id="deleteAll">Borrar todos los registros</button>
+        </div>
+
+        <h3>Resumen por experto</h3>
+        <div class="table-wrap" style="max-height:260px;">
+          <table style="min-width:560px;">
+            <thead>
+              <tr>
+                <th>Experto</th>
+                <th>Atenciones</th>
+                <th>Capot</th>
+                <th>Ventas lubricantes</th>
+              </tr>
+            </thead>
+            <tbody id="summaryBody">
+              <tr><td colspan="4" class="empty">Sin datos para resumir.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Detalle de registros</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Experto</th>
+                <th>Capot</th>
+                <th>Venta lubricante</th>
+                <th>Producto</th>
+                <th>Observaciones</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody">
+              <tr><td colspan="7" class="empty">Sin registros cargados.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_RECORDS = "peta_registro_operativo_capot_lub_v4";
+    const STORAGE_EXPERTS = "peta_expertos_capot_lub_v4";
+    const STORAGE_PRODUCTS = "peta_productos_capot_lub_v4";
+
+    const DEFAULT_EXPERTS = ["Máximo","Mauro","Claudio","Julián","Gustavo","Fabián","Matías","Guillermo","Jorge"];
+    const DEFAULT_PRODUCTS = [
+      "Helix x 1",
+      "Helix x 4",
+      "Helix x 20",
+      "Rimula x 1",
+      "Rimula x 4",
+      "Rimula x 20",
+      "Otros lubricantes"
+    ];
+
+    const $ = (id) => document.getElementById(id);
+
+    const form = $("recordForm");
+    const recordsBody = $("recordsBody");
+    const summaryBody = $("summaryBody");
+
+    function todayISO(){
+      const d = new Date();
+      const tz = d.getTimezoneOffset() * 60000;
+      return new Date(d - tz).toISOString().slice(0,10);
+    }
+
+    function formatDateISO(iso){
+      if(!iso) return "";
+      const [y,m,d] = iso.split("-");
+      return `${d}/${m}/${y}`;
+    }
+
+    function getJSON(key, fallback){
+      try {
+        const value = JSON.parse(localStorage.getItem(key));
+        return Array.isArray(value) ? value : fallback;
+      } catch(e){
+        return fallback;
+      }
+    }
+
+    function setJSON(key, value){
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function getRecords(){ return getJSON(STORAGE_RECORDS, []); }
+    function saveRecords(records){ setJSON(STORAGE_RECORDS, records); }
+
+    function getExperts(){
+      let experts = getJSON(STORAGE_EXPERTS, null);
+      if(!experts || experts.length === 0){
+        experts = DEFAULT_EXPERTS;
+        setJSON(STORAGE_EXPERTS, experts);
+      }
+      return experts;
+    }
+
+    function getProducts(){
+      let products = getJSON(STORAGE_PRODUCTS, null);
+      if(!products || products.length === 0){
+        products = DEFAULT_PRODUCTS;
+        setJSON(STORAGE_PRODUCTS, products);
+      }
+      return products;
+    }
+
+    function normalizeName(value){
+      return String(value || "").trim().replace(/\s+/g, " ");
+    }
+
+    function renderSelectOptions(){
+      const experts = getExperts();
+      const products = getProducts();
+
+      const selectedExpert = $("colaborador").value;
+      $("colaborador").innerHTML = `<option value="">Seleccionar experto</option>` +
+        experts.map(x => `<option>${escapeHtml(x)}</option>`).join("");
+      if(experts.includes(selectedExpert)) $("colaborador").value = selectedExpert;
+
+      const currentFilter = $("filterColaborador").value;
+      $("filterColaborador").innerHTML = `<option value="">Todos</option>` +
+        experts.map(x => `<option>${escapeHtml(x)}</option>`).join("");
+      if(experts.includes(currentFilter)) $("filterColaborador").value = currentFilter;
+
+      const selectedProduct = $("producto").value;
+      $("producto").innerHTML = `<option value="">Seleccionar producto</option>` +
+        products.map(x => `<option>${escapeHtml(x)}</option>`).join("");
+      if(products.includes(selectedProduct)) $("producto").value = selectedProduct;
+
+      $("expertList").innerHTML = experts.map(x => `
+        <span class="tag">${escapeHtml(x)} <button type="button" onclick="removeExpert('${escapeAttr(x)}')">x</button></span>
+      `).join("");
+
+      $("productList").innerHTML = products.map(x => `
+        <span class="tag">${escapeHtml(x)} <button type="button" onclick="removeProduct('${escapeAttr(x)}')">x</button></span>
+      `).join("");
+    }
+
+    function getFilteredRecords(){
+      const records = getRecords();
+      const fFecha = $("filterFecha").value;
+      const fColaborador = $("filterColaborador").value;
+
+      return records.filter(r => {
+        const okFecha = !fFecha || r.fecha === fFecha;
+        const okColaborador = !fColaborador || r.colaborador === fColaborador;
+        return okFecha && okColaborador;
+      }).sort((a,b) => {
+        const A = `${b.fecha || ""} ${b.createdAt || ""}`;
+        const B = `${a.fecha || ""} ${a.createdAt || ""}`;
+        return A.localeCompare(B);
+      });
+    }
+
+    function capotValue(){
+      return $("capotSi").checked;
+    }
+
+    function lubValue(){
+      return $("lubricanteSi").checked;
+    }
+
+    function getFormData(){
+      const vendido = lubValue();
+      return {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+        createdAt: new Date().toISOString(),
+        fecha: $("fecha").value,
+        colaborador: $("colaborador").value,
+        capotRealizado: capotValue(),
+        lubricanteVendido: vendido,
+        producto: vendido ? $("producto").value : "",
+        observaciones: $("observaciones").value.trim()
+      };
+    }
+
+    function resetOperation(keepExpert = true){
+      const experto = $("colaborador").value;
+      form.reset();
+      $("fecha").value = todayISO();
+      if(keepExpert) $("colaborador").value = experto;
+      $("capotNo").checked = true;
+      $("lubricanteNo").checked = true;
+      $("productBox").classList.add("hidden");
+    }
+
+    function saveOperation(custom = null){
+      const data = custom || getFormData();
+
+      if(!data.fecha || !data.colaborador){
+        alert("Completá fecha y experto.");
+        return false;
+      }
+
+      if(data.lubricanteVendido && !data.producto){
+        alert("Seleccioná el producto vendido.");
+        return false;
+      }
+
+      const records = getRecords();
+      records.push(data);
+      saveRecords(records);
+
+      $("lastSaved").style.display = "block";
+      $("lastSaved").innerHTML = `Registro guardado: <strong>${escapeHtml(data.colaborador)}</strong> | Capot: <strong>${data.capotRealizado ? "Sí" : "No"}</strong> | Venta: <strong>${data.lubricanteVendido ? "Sí" : "No"}</strong>`;
+      resetOperation(true);
+      render();
+      return true;
+    }
+
+    function render(){
+      const filtered = getFilteredRecords();
+
+      const totalAtenciones = filtered.length;
+      const totalCapot = filtered.filter(r => r.capotRealizado).length;
+      const totalVentas = filtered.filter(r => r.lubricanteVendido).length;
+      const totalExpertosActivos = new Set(filtered.map(r => r.colaborador).filter(Boolean)).size;
+
+      $("kpiAtenciones").textContent = totalAtenciones;
+      $("kpiCapot").textContent = totalCapot;
+      $("kpiVentas").textContent = totalVentas;
+      $("kpiExpertos").textContent = totalExpertosActivos;
+
+      renderSummary(filtered);
+      renderRecords(filtered);
+    }
+
+    function renderSummary(records){
+      if(records.length === 0){
+        summaryBody.innerHTML = `<tr><td colspan="4" class="empty">Sin datos para resumir.</td></tr>`;
+        return;
+      }
+
+      const map = {};
+      records.forEach(r => {
+        if(!map[r.colaborador]){
+          map[r.colaborador] = {colaborador:r.colaborador, atenciones:0, capot:0, ventas:0};
+        }
+        map[r.colaborador].atenciones += 1;
+        if(r.capotRealizado) map[r.colaborador].capot += 1;
+        if(r.lubricanteVendido) map[r.colaborador].ventas += 1;
+      });
+
+      const rows = Object.values(map).sort((a,b) => b.atenciones - a.atenciones || a.colaborador.localeCompare(b.colaborador));
+
+      const total = rows.reduce((acc,r) => {
+        acc.atenciones += r.atenciones;
+        acc.capot += r.capot;
+        acc.ventas += r.ventas;
+        return acc;
+      }, {atenciones:0, capot:0, ventas:0});
+
+      summaryBody.innerHTML = rows.map(r => `
+        <tr>
+          <td><strong>${escapeHtml(r.colaborador)}</strong></td>
+          <td>${r.atenciones}</td>
+          <td>${r.capot}</td>
+          <td>${r.ventas}</td>
+        </tr>
+      `).join("") + `
+        <tr>
+          <td><strong>Total expertos</strong></td>
+          <td><strong>${total.atenciones}</strong></td>
+          <td><strong>${total.capot}</strong></td>
+          <td><strong>${total.ventas}</strong></td>
+        </tr>
+      `;
+    }
+
+    function renderRecords(records){
+      if(records.length === 0){
+        recordsBody.innerHTML = `<tr><td colspan="7" class="empty">Sin registros para mostrar.</td></tr>`;
+        return;
+      }
+
+      recordsBody.innerHTML = records.map(r => `
+        <tr>
+          <td>${formatDateISO(r.fecha)}</td>
+          <td><strong>${escapeHtml(r.colaborador)}</strong></td>
+          <td>${pill(r.capotRealizado)}</td>
+          <td>${pill(r.lubricanteVendido)}</td>
+          <td>${escapeHtml(r.producto || "-")}</td>
+          <td>${escapeHtml(r.observaciones || "")}</td>
+          <td><button class="delete-row" onclick="deleteRecord('${r.id}')">Borrar</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function pill(value){
+      return value ? `<span class="pill yes">Sí</span>` : `<span class="pill no">No</span>`;
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function escapeAttr(str){
+      return String(str ?? "").replaceAll("\\","\\\\").replaceAll("'","\\'");
+    }
+
+    window.deleteRecord = function(id){
+      const ok = confirm("¿Borrar este registro?");
+      if(!ok) return;
+      const records = getRecords().filter(r => r.id !== id);
+      saveRecords(records);
+      render();
+    }
+
+    window.removeExpert = function(name){
+      const records = getRecords();
+      const hasRecords = records.some(r => r.colaborador === name);
+      if(hasRecords){
+        const ok = confirm("Este experto tiene registros cargados. Si lo eliminás, los registros anteriores se mantienen, pero no aparecerá para nuevas cargas. ¿Continuar?");
+        if(!ok) return;
+      }
+      const experts = getExperts().filter(x => x !== name);
+      setJSON(STORAGE_EXPERTS, experts);
+      renderSelectOptions();
+      render();
+    }
+
+    window.removeProduct = function(name){
+      const records = getRecords();
+      const hasRecords = records.some(r => r.producto === name);
+      if(hasRecords){
+        const ok = confirm("Este producto tiene registros cargados. Si lo eliminás, los registros anteriores se mantienen, pero no aparecerá para nuevas cargas. ¿Continuar?");
+        if(!ok) return;
+      }
+      const products = getProducts().filter(x => x !== name);
+      setJSON(STORAGE_PRODUCTS, products);
+      renderSelectOptions();
+      render();
+    }
+
+    function addItem(type){
+      const inputId = type === "expert" ? "newExpert" : "newProduct";
+      const storage = type === "expert" ? STORAGE_EXPERTS : STORAGE_PRODUCTS;
+      const getter = type === "expert" ? getExperts : getProducts;
+      const label = type === "expert" ? "experto" : "producto";
+      const value = normalizeName($(inputId).value);
+
+      if(!value){
+        alert(`Ingresá un ${label}.`);
+        return;
+      }
+
+      const list = getter();
+      const exists = list.some(x => x.toLowerCase() === value.toLowerCase());
+      if(exists){
+        alert(`Ese ${label} ya está cargado.`);
+        return;
+      }
+
+      list.push(value);
+      list.sort((a,b) => a.localeCompare(b));
+      setJSON(storage, list);
+      $(inputId).value = "";
+      renderSelectOptions();
+      render();
+    }
+
+    function exportCSV(){
+      const records = getFilteredRecords();
+      if(records.length === 0){
+        alert("No hay registros para exportar.");
+        return;
+      }
+
+      const headers = [
+        "Fecha","Experto","Levanto capot","Vendio lubricante","Producto","Observaciones"
+      ];
+
+      const rows = records.map(r => [
+        formatDateISO(r.fecha),
+        r.colaborador,
+        r.capotRealizado ? "Si" : "No",
+        r.lubricanteVendido ? "Si" : "No",
+        r.producto || "",
+        r.observaciones || ""
+      ]);
+
+      const csv = [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell ?? "").replaceAll('"','""')}"`).join(";"))
+        .join("\n");
+
+      const blob = new Blob(["\ufeff" + csv], {type:"text/csv;charset=utf-8;"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `registro_capot_lubricantes_${todayISO()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      saveOperation();
+    });
+
+    $("newClean").addEventListener("click", () => resetOperation(false));
+
+    $("sameExpertCapot").addEventListener("click", () => {
+      const experto = $("colaborador").value;
+      if(!experto){
+        alert("Seleccioná el experto.");
+        return;
+      }
+      saveOperation({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+        createdAt: new Date().toISOString(),
+        fecha: $("fecha").value || todayISO(),
+        colaborador: experto,
+        capotRealizado: true,
+        lubricanteVendido: false,
+        producto: "",
+        observaciones: ""
+      });
+    });
+
+    $("sameExpertLub").addEventListener("click", () => {
+      const experto = $("colaborador").value;
+      if(!experto){
+        alert("Seleccioná el experto.");
+        return;
+      }
+      $("lubricanteSi").checked = true;
+      $("productBox").classList.remove("hidden");
+      if(!$("producto").value){
+        alert("Seleccioná el producto vendido y luego presioná Guardar atención.");
+        return;
+      }
+      saveOperation();
+    });
+
+    $("addExpert").addEventListener("click", () => addItem("expert"));
+    $("addProduct").addEventListener("click", () => addItem("product"));
+
+    $("newExpert").addEventListener("keydown", e => {
+      if(e.key === "Enter"){ e.preventDefault(); addItem("expert"); }
+    });
+    $("newProduct").addEventListener("keydown", e => {
+      if(e.key === "Enter"){ e.preventDefault(); addItem("product"); }
+    });
+
+    $("exportCsv").addEventListener("click", exportCSV);
+    $("printReport").addEventListener("click", () => window.print());
+
+    $("deleteAll").addEventListener("click", () => {
+      const ok = confirm("¿Seguro que querés borrar todos los registros guardados en este dispositivo?");
+      if(!ok) return;
+      localStorage.removeItem(STORAGE_RECORDS);
+      render();
+    });
+
+    $("todayFilter").addEventListener("click", () => {
+      $("filterFecha").value = todayISO();
+      render();
+    });
+
+    $("clearFilters").addEventListener("click", () => {
+      $("filterFecha").value = "";
+      $("filterColaborador").value = "";
+      render();
+    });
+
+    ["filterFecha","filterColaborador"].forEach(id => {
+      $(id).addEventListener("input", render);
+      $(id).addEventListener("change", render);
+    });
+
+    ["lubricanteSi","lubricanteNo"].forEach(id => {
+      $(id).addEventListener("change", () => {
+        const visible = $("lubricanteSi").checked;
+        $("productBox").classList.toggle("hidden", !visible);
+        if(!visible){
+          $("producto").value = "";
+        }
+      });
+    });
+
+    function init(){
+      renderSelectOptions();
+      $("fecha").value = todayISO();
+      $("filterFecha").value = todayISO();
+      $("todayBadge").textContent = `Fecha de trabajo: ${formatDateISO(todayISO())}`;
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>
